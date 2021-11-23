@@ -1,11 +1,8 @@
 from corsheaders.middleware import ACCESS_CONTROL_ALLOW_ORIGIN
-from rest_framework import serializers, status
-from rest_framework import permissions
-from rest_framework import response
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.permissions import IsAuthenticated
 import jwt, datetime
 from .models import User
 from .serializers import UserSerializer
@@ -77,14 +74,17 @@ class UpdateView(APIView):
     def post(self, request):
         username = request.data["username"]
         user = User.objects.get(username=username)
-        
+
         serializer = UserSerializer(instance=user, data=request.data)
         if serializer.is_valid():
             serializer.save()
         return Response(serializer.data)
 
+
 class UpdateNameView(APIView):
     def post(self, request):
         username = request.data["username"]
-        User.objects.filter(username = username).update(name= request.data["name"], birth= request.data['birth'])
-        return Response({"message" : "ok"})
+        User.objects.filter(username=username).update(
+            name=request.data["name"], birth=request.data["birth"]
+        )
+        return Response({"message": "ok"})
